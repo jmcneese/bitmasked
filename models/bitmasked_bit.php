@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @package     bitmasked
- * @subpackage  bitmasked.tests.cases.behaviors
- * @author      Joshua McNeese <jmcneese@gmail.com>
+ * @package		bitmasked
+ * @subpackage	bitmasked.tests.cases.behaviors
+ * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
  */

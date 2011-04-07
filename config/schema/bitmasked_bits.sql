@@ -7,7 +7,7 @@ CREATE TABLE `bitmasked_bits` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `model` varchar(32) NOT NULL,
   `foreign_id` int(11) unsigned NOT NULL,
-  `bits` int(12) unsigned NOT NULL DEFAULT '1',
+  `bits` bigint(20) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `polymorphic_idx` (`model`,`foreign_id`)
 );

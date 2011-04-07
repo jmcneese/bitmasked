@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @package     bitmasked
- * @subpackage  bitmasked.tests.cases.behaviors
- * @author      Joshua McNeese <jmcneese@gmail.com>
+ * @package		bitmasked
+ * @subpackage	bitmasked.tests.cases.behaviors
+ * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
  */
@@ -15,33 +15,33 @@
  */
 class BitmaskedThingFixture extends CakeTestFixture {
 
-    /**
-     * @var string
-     */
-    public $name = 'BitmaskedThing';
+	/**
+	 * @var string
+	 */
+	public $name = 'BitmaskedThing';
 
-    /**
-     * @var array
-     */
-    public $fields = array(
-        'id' => array(
-            'type' => 'integer',
-            'length'=> 11,
-            'key' => 'primary'
-        ),
-        'name'=> array(
-            'type' => 'string',
-            'length'=> 32,
-            'null' => false
-        ),
-        'desc' => 'text',
-        'created' => 'datetime',
-        'modified' => 'datetime',
-        'is_deleted' => array(
-            'type' => 'integer',
-            'length' => 1
-        ),
-    );
+	/**
+	 * @var array
+	 */
+	public $fields = array(
+		'id' => array(
+			'type' => 'integer',
+			'length' => 11,
+			'key' => 'primary'
+		),
+		'name' => array(
+			'type' => 'string',
+			'length' => 32,
+			'null' => false
+		),
+		'desc' => 'text',
+		'created' => 'datetime',
+		'modified' => 'datetime',
+		'is_deleted' => array(
+			'type' => 'integer',
+			'length' => 1
+		),
+	);
 
 	/**
 	 * @var array

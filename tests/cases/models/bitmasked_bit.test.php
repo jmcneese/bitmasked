@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @package     bitmasked
- * @subpackage  bitmasked.tests.cases.behaviors
- * @author      Joshua McNeese <jmcneese@gmail.com>
+ * @package		bitmasked
+ * @subpackage	bitmasked.tests.cases.behaviors
+ * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
  */
@@ -11,8 +11,8 @@
 /**
  * BitmaskedBit Model Test Case
  *
- * @see     BitmaskedBit
- * @uses    CakeTestCase
+ * @see		BitmaskedBit
+ * @uses	CakeTestCase
  */
 class BitmaskedBitTestCase extends CakeTestCase {
 
@@ -27,11 +27,8 @@ class BitmaskedBitTestCase extends CakeTestCase {
 	 * @return void
 	 */
 	public function start() {
-
 		parent::start();
-
 		$this->BitmaskedBit = ClassRegistry::init('Bitmasked.BitmaskedBit');
-
 	}
 
 	/**
@@ -40,9 +37,7 @@ class BitmaskedBitTestCase extends CakeTestCase {
 	 * @return void
 	 */
 	public function testInstanceSetup() {
-
 		$this->assertIsA($this->BitmaskedBit, 'Model');
-
 	}
 
 	/**
@@ -51,18 +46,15 @@ class BitmaskedBitTestCase extends CakeTestCase {
 	 * @return void
 	 */
 	public function testValidation() {
-
 		$this->BitmaskedBit->create();
-
 		$data = array(
-			'model'	=> null,
+			'model' => null,
 			'foreign_id' => null,
 			'bits' => 'x'
 		);
 		$result = $this->BitmaskedBit->save($data);
 		$this->assertFalse($result);
 		$this->assertEqual(count($this->BitmaskedBit->invalidFields()), count($data));
-
 	}
 
 }
