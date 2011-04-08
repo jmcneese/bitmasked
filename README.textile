@@ -9,21 +9,21 @@ h2. Requirements
 
 h2. Installation
 
-_[Manual]_
+h3. Manual
 
 # Download this: http://github.com/jmcneese/bitmasked/zipball/master
 # Unzip that download.
 # Copy the resulting folder to app/plugins
 # Rename the folder you just copied to @bitmasked@
 
-_[GIT Submodule]_
+h3. GIT Submodule
 
 From your repository root directory type:
 <pre><code>git submodule add git://github.com/jmcneese/bitmasked.git app/plugins/bitmasked
 git submodule update --init
 </code></pre>
 
-_[GIT Clone]_
+h3. GIT Clone
 
 In your plugin directory type
 <pre><code>git clone git://github.com/jmcneese/bitmasked.git</code></pre>
