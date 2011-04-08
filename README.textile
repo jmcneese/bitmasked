@@ -2,15 +2,9 @@ h1. Bitmasked Plugin
 
 Row-level filtering of models via bitmasks.
 
-h2. Background
-
-[A PARAGRAPH DESCRIBING WHY YOU BUILT THIS]
-
-[ANOTHER PARAGRAPH DESCRIBING YOUR IMPETUS FOR RELEASING THIS]
-
 h2. Requirements
 
-* PHP5.2+
+* PHP5.2+ (Fully featured with 5.3+)
 * CakePHP 1.3+
 
 h2. Installation
@@ -36,23 +30,33 @@ In your plugin directory type
 
 h2. Usage
 
-[EXAMPLE ON HOW TO SETUP YOUR PLUGIN]
-
-[PARAGRAPH EXPLAINING DIFFERENT WAYS TO CONFIGURE THE PLUGIN]
+# Import the SQL in config/schema/bitmasked_bits.sql into your application's database
+# Activate the behavior in whichever model(s) you desire, via:<pre><code>
+public $actsAs = array(
+	'Bitmasked.Bitmasked'
+);
+</code></pre>
 
 h2. Options
 
-# [ONE OPTION] : [OPTION EXPLANATION]
-# [ANOTHER OPTION] : [OPTION EXPLANATION]
-# [YET ANOTHER OPTION]
-## [VALID PARAMETER]
-## [ANOTHER VALID PARAMETER]
+There are several configurable options that can be passed into the behavior:
+
+* <em>disabled</em> -- If you want the behavior to start as disabled, i.e. not automatically filter rows based on bitmask, set this to true. Default: false
+* <em>default</em> -- This is the default bit that is saved for new records for this model, unless otherwise specified in save data. Default: 1
+* <em>bits</em> -- An array of flags (string) that map to bits (integer) to use for this particular model. Default: array('ALL' => 1)
+* <em>mask</em> -- The bitmask to use when finding records on this model. There are several possible settings here:
+** Implicit (integer). This is when the bitmask is static across all finds.
+** Flag (string). This is a string representation of a flag you have defined in the 'bits' option.
+** Flags (array). An array of flags in string form.
+** Callback (mixed). Either a string referring to a function name in global scope, a method in the attached model or an anonymous function (PHP5.3 only).
+
+h2. Examples
+
+
 
 h2. Todo
 
-* [TODO ITEM]
-* [ANOTHER ITEM]
-* -[COMPLETED ITEM]-
+* Add behavior method to reconfigure, e.g. change configuration options.
 
 h2. License
 
