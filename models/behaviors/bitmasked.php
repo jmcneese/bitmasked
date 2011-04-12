@@ -2,7 +2,7 @@
 
 /**
  * @package		bitmasked
- * @subpackage	bitmasked.tests.cases.behaviors
+ * @subpackage	bitmasked.models.behaviors
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
@@ -22,7 +22,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 *
 	 * @var array
 	 */
-	private $_defaults = array(
+	protected $_defaults = array(
 		'bits' => array(
 			'ALL' => 1
 		),
@@ -37,7 +37,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	Model	$Model
 	 * @return	boolean
 	 */
-	private function _bind(&$Model, $conditions = array()) {
+	protected function _bind(&$Model, $conditions = array()) {
 		$this->_unbind($Model);
 		$alias = $this->getBitmaskedBitAlias($Model);
 		return $Model->bindModel(array(
@@ -62,7 +62,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param   mixed	$flags
 	 * @return  integer
 	 */
-	private function _flagsToBits(&$Model, $flags = array()) {
+	protected function _flagsToBits(&$Model, $flags = array()) {
 		$bits = 0;
 		if (!empty($flags)) {
 			foreach ($flags as $flag) {
@@ -82,7 +82,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	mixed	$flag
 	 * @return	integer
 	 */
-	private function _flagToBit(&$Model, $flag = null) {
+	protected function _flagToBit(&$Model, $flag = null) {
 		$bits = $this->settings[$Model->alias]['bits'];
 		$flag = strtoupper($flag);
 		return empty($flag) || !array_key_exists($flag, $bits) ? false : $bits[$flag];
@@ -94,7 +94,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param  Model	$Model
 	 * @return boolean
 	 */
-	private function _unbind(&$Model) {
+	protected function _unbind(&$Model) {
 		return $Model->unbindModel(array(
 			'hasOne' => array(
 				$this->getBitmaskedBitAlias($Model)
@@ -105,7 +105,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	/**
 	 * afterSave model callback
 	 *
-	 * cleanup any related bitmask rows
+	 * save related bitmask row
 	 *
 	 * @param	Model	$Model
 	 * @param	boolean	$created
@@ -212,21 +212,24 @@ class BitmaskedBehavior extends ModelBehavior {
 					$bitmask = call_user_func($bitmask);
 					break;
 				case is_string($bitmask) && method_exists($Model, $bitmask):
-					$bitmask = call_user_func(array(&$Model, $bitmask
-					));
+					$bitmask = call_user_func(array(&$Model, $bitmask));
+					break;
+				case is_string($bitmask) && method_exists($this, $bitmask):
+					$bitmask = call_user_func(array(&$this, $bitmask));
 					break;
 				default:
 					$bitmask = $this->_flagToBit($Model, $bitmask);
 			}
 		}
-		/**
-		 * bind the BitmaskedBit model as an INNER JOIN to the existing query, filtering out records without the
-		 * requisite bits
-		 */
-		$this->_bind($Model, array(
-			"{$alias}.model" => "{$Model->name}",
-			"{$alias}.bits & {$bitmask} <> 0"
-		));
+		if(!empty($bitmask)) {
+			/**
+			 * bind the BitmaskedBit model as an INNER JOIN to the existing query, filtering out records without the
+			 * requisite bits
+			 */
+			$this->_bind($Model, array(
+				"{$alias}.bits & {$bitmask} <> 0"
+			));
+		}
 		return $queryData;
 	}
 
