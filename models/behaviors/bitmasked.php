@@ -191,7 +191,7 @@ class BitmaskedBehavior extends ModelBehavior {
 			$bitmask = $queryData['bitmask'];
 			unset($queryData['bitmask']);
 		}
-		if (isset($queryData['conditions']['bitmask'])) {
+		if (isset($queryData['conditions']) && is_array($queryData['conditions']) && isset($queryData['conditions']['bitmask'])) {
 			$bitmask = $queryData['conditions']['bitmask'];
 			unset($queryData['conditions']['bitmask']);
 		}
