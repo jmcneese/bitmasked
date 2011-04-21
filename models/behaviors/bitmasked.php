@@ -214,9 +214,6 @@ class BitmaskedBehavior extends ModelBehavior {
 				case is_string($bitmask) && method_exists($Model, $bitmask):
 					$bitmask = call_user_func(array(&$Model, $bitmask));
 					break;
-				case is_string($bitmask) && method_exists($this, $bitmask):
-					$bitmask = call_user_func(array(&$this, $bitmask));
-					break;
 				default:
 					$bitmask = $this->_flagToBit($Model, $bitmask);
 			}
@@ -231,6 +228,26 @@ class BitmaskedBehavior extends ModelBehavior {
 			));
 		}
 		return $queryData;
+	}
+
+	/**
+	 * delete the bitmask for the record
+	 *
+	 * @param	Model	$Model
+	 * @param	mixed	$id
+	 * @return	mixed
+	 */
+	public function deleteBitmaskedBit(&$Model, $id = null) {
+		$id = empty($id) ? $Model->id : $id;
+		if (empty($id)) {
+			return false;
+		}
+		$this->_bind($Model);
+		$alias = $this->getBitmaskedBitAlias($Model);
+		return $Model->{$alias}->deleteAll(array(
+			"{$alias}.model" => $Model->alias,
+			"{$alias}.foreign_id" => $id
+		));
 	}
 
 	/**

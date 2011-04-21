@@ -168,6 +168,27 @@ class BitmaskedTestCase extends CakeTestCase {
 	}
 
 	/**
+	 * Test deleteBitmaskedBit
+	 *
+	 * @return void
+	 */
+	public function testDeleteBitmaskedBit() {
+		$id = 4;
+		// test with missing id
+		$result = $this->BitmaskedThing->deleteBitmaskedBit();
+		$this->assertFalse($result);
+		// test with explicit id
+		$result = $this->BitmaskedThing->deleteBitmaskedBit($id);
+		$this->assertTrue($result);
+		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit($id));
+		// test with implicit id
+		$this->BitmaskedThing->id = $id;
+		$result = $this->BitmaskedThing->deleteBitmaskedBit();
+		$this->assertTrue($result);
+		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit($id));
+	}
+
+	/**
 	 * Test getBits
 	 *
 	 * @return void
