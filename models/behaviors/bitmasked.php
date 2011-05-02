@@ -115,7 +115,7 @@ class BitmaskedBehavior extends ModelBehavior {
 		$alias = $this->getBitmaskedBitAlias($Model);
 		$requested = array();
 		$data = array(
-			'model' => $Model->alias,
+			'model' => $Model->name,
 			'foreign_id' => $Model->id,
 			'bits' => $this->settings[$Model->alias]['default']
 		);
@@ -263,7 +263,7 @@ class BitmaskedBehavior extends ModelBehavior {
 		$this->_bind($Model);
 		$alias = $this->getBitmaskedBitAlias($Model);
 		return $Model->{$alias}->deleteAll(array(
-			"{$alias}.model" => $Model->alias,
+			"{$alias}.model" => $Model->name,
 			"{$alias}.foreign_id" => $id
 		));
 	}
@@ -315,7 +315,7 @@ class BitmaskedBehavior extends ModelBehavior {
 		$alias = $this->getBitmaskedBitAlias($Model);
 		return $Model->{$alias}->find('first', array(
 			'conditions' => array(
-				"{$alias}.model" => $Model->alias,
+				"{$alias}.model" => $Model->name,
 				"{$alias}.foreign_id" => $id
 			)
 		));
