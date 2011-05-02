@@ -231,6 +231,24 @@ class BitmaskedBehavior extends ModelBehavior {
 	}
 
 	/**
+	 * turn arrays of flags into bits, if necessary
+	 *
+	 * @param  Model	$Model
+	 * @return mixed
+	 */
+	public function beforeSave(&$Model) {
+		$alias = $this->getBitmaskedBitAlias($Model);
+		if (!empty($Model->data[$Model->alias]['bits']) && is_array($Model->data[$Model->alias]['bits'])) {
+			$Model->data[$Model->alias]['bits'] = $this->_flagsToBits($Model, $Model->data[$Model->alias]['bits']);
+		} elseif (!empty($Model->data['BitmaskedBit']['bits']) && is_array($Model->data['BitmaskedBit']['bits'])) {
+			$Model->data['BitmaskedBit']['bits'] = $this->_flagsToBits($Model, $Model->data['BitmaskedBit']['bits']);
+		} elseif (!empty($Model->data[$alias]['bits']) && is_array($Model->data[$alias]['bits'])) {
+			$Model->data[$alias]['bits'] = $this->_flagsToBits($Model, $Model->data[$alias]['bits']);
+		}
+		return parent::beforeSave($Model);
+	}
+
+	/**
 	 * delete the bitmask for the record
 	 *
 	 * @param	Model	$Model

@@ -304,6 +304,22 @@ class BitmaskedTestCase extends CakeTestCase {
 		$result = $this->BitmaskedThing->getBits();
 		$this->assertTrue($result);
 		$this->assertEqual($bits, $result);
+		$this->BitmaskedThing->create();
+		$this->BitmaskedThing->save(array(
+			'BitmaskedThing' => array(
+				'name' => 'ShooWop',
+				'desc' => 'A ShooWop is a type of Thing'
+			),
+			'BitmaskedBit' => array(
+				'bits' => array(
+					'ALL',
+					'REGISTERED'
+				)
+			)
+		));
+		$result = $this->BitmaskedThing->getBits();
+		$this->assertTrue($result);
+		$this->assertEqual($result, 3);
 		// test bad data
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
