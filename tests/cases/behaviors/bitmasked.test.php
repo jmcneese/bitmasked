@@ -213,35 +213,6 @@ class BitmaskedTestCase extends CakeTestCase {
 	}
 
 	/**
-	 * Test hasBit
-	 *
-	 * @return void
-	 */
-	public function testHasBit() {
-		$id = 1;
-		$bit = 1;
-		// test with missing id
-		$result = $this->BitmaskedThing->hasBit();
-		$this->assertFalse($result);
-		// test with bad id
-		$result = $this->BitmaskedThing->hasBit(999, $bit);
-		$this->assertFalse($result);
-		// test with explicit id
-		$result = $this->BitmaskedThing->hasBit($id, $bit);
-		$this->assertTrue($result);
-		// test with implicit id
-		$this->BitmaskedThing->id = $id;
-		$result = $this->BitmaskedThing->hasBit(null, $bit);
-		$this->assertTrue($result);
-		// test with string bit
-		$result = $this->BitmaskedThing->hasBit($id, 'ALL');
-		$this->assertTrue($result);
-		// test with bad string bit
-		$result = $this->BitmaskedThing->hasBit($id, 'SHOOP');
-		$this->assertFalse($result);
-	}
-
-	/**
 	 * Test afterSave (create)
 	 *
 	 * @return void
@@ -454,6 +425,52 @@ class BitmaskedTestCase extends CakeTestCase {
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=12]", $result));
 		$this->assertEqual(count($result), 2);
+	}
+
+	/**
+	 * Test hasBit
+	 *
+	 * @return void
+	 */
+	public function testHasBit() {
+		$id = 1;
+		$bit = 1;
+		// test with missing id
+		$result = $this->BitmaskedThing->hasBit();
+		$this->assertFalse($result);
+		// test with bad id
+		$result = $this->BitmaskedThing->hasBit(999, $bit);
+		$this->assertFalse($result);
+		// test with explicit id
+		$result = $this->BitmaskedThing->hasBit($id, $bit);
+		$this->assertTrue($result);
+		// test with implicit id
+		$this->BitmaskedThing->id = $id;
+		$result = $this->BitmaskedThing->hasBit(null, $bit);
+		$this->assertTrue($result);
+		// test with string bit
+		$result = $this->BitmaskedThing->hasBit($id, 'ALL');
+		$this->assertTrue($result);
+		// test with bad string bit
+		$result = $this->BitmaskedThing->hasBit($id, 'SHOOP');
+		$this->assertFalse($result);
+		// test with a missing bit
+		$alias = $this->BitmaskedThing->getBitmaskedBitAlias();
+		$this->BitmaskedThing->create();
+		$this->BitmaskedThing->save(array(
+			'BitmaskedThing' => array(
+				'name' => 'Geegaw',
+				'desc' => 'A Geegaw is a type of Thing'
+			),
+			$alias => array(
+				'bits' => array(
+					'ALL',
+					'REGISTERED',
+					'18PLUS'
+				)
+			)
+		));
+		$this->assertFalse($this->BitmaskedThing->hasBit(null, '21PLUS'));
 	}
 
 }

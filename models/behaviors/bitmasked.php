@@ -354,7 +354,7 @@ class BitmaskedBehavior extends ModelBehavior {
 				return false;
 			}
 		}
-		return (int)$bits & (int)$bit <> 0;
+		return ((int)$bits & (int)$bit) <> 0;
 	}
 
 	/**
