@@ -309,11 +309,54 @@ class BitmaskedTestCase extends CakeTestCase {
 	}
 
 	/**
+	 * test updating existing record w/out providing bits
+	 * test due to bug: behavior should not reset bits to default
+	 *
+	 * @author	Ryan Morris <ryan@houseparty.com>
+	 * @return 	void
+	 */
+	public function testUpdateWithoutBits() {
+
+		// first lets set up a thing and give it some non-default bits
+		$this->BitmaskedThing->id = 1;
+		$newBits = 12;
+		$oldBits = $this->BitmaskedThing->getBits();
+		$alias = $this->BitmaskedThing->getBitmaskedBitAlias();
+		$this->BitmaskedThing->save(array(
+			$alias => array(
+				'bits' => $newBits
+			)
+		));
+		$resultingBits = $this->BitmaskedThing->getBits();
+
+		$this->assertTrue($resultingBits);
+		$this->assertEqual($resultingBits, $newBits);
+		$this->assertNotEqual($resultingBits, $oldBits);
+
+		// now lets test to ensure updating the Thing will not impact its bits 
+		$this->BitmaskedThing->create(null);
+		$result = $this->BitmaskedThing->save(array(
+			'id' => 1,
+			'name' => 'newname'	
+		));
+
+		$this->assertTrue($result);
+
+		$this->BitmaskedThing->id = 1;
+		$bits = $this->BitmaskedThing->getBits();
+
+		$this->assertEqual($bits, $resultingBits, "Bits should NOT have changed after the update");
+
+
+	}
+
+	/**
 	 * Test afterSave (update)
 	 *
 	 * @return void
 	 */
 	public function testAfterSaveUpdate() {
+
 		$this->BitmaskedThing->id = 1;
 		$newBits = 12;
 		$oldBits = $this->BitmaskedThing->getBits();
@@ -327,6 +370,31 @@ class BitmaskedTestCase extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertEqual($result, $newBits);
 		$this->assertNotEqual($result, $oldBits);
+
+		$this->BitmaskedThing->create(null);
+		$newBits = 11;
+		$oldBits = $this->BitmaskedThing->getBits();
+		$alias = $this->BitmaskedThing->getBitmaskedBitAlias();
+		$this->BitmaskedThing->save(array(
+			$alias => array(
+				'id' => 1,
+				'bits' => $newBits
+			)
+		));
+		$result = $this->BitmaskedThing->getBits();
+		$this->assertTrue($result);
+		$this->assertEqual($result, $newBits);
+		$this->assertNotEqual($result, $oldBits);
+
+		$result = ClassRegistry::init('Bitmasked.BitmaskedBit')->find('all', array(
+			'conditions' => array(
+				'BitmaskedBit.foreign_id' => 1,
+				'BitmaskedBit.model' => 'BitmaskedThing'
+			)
+		));
+
+		$this->assertEqual(count($result), 1);
+
 	}
 
 	/**
