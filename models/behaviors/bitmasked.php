@@ -107,6 +107,8 @@ class BitmaskedBehavior extends ModelBehavior {
 	 *
 	 * save related bitmask row
 	 *
+	 * @author	Joshua McNeese
+	 * @author	Ryan Morris
 	 * @param	Model	$Model
 	 * @param	boolean	$created
 	 * @return	boolean
@@ -129,6 +131,17 @@ class BitmaskedBehavior extends ModelBehavior {
 			$requested = $Model->data[$alias];
 			unset($Model->data[$alias]);
 		}
+
+		// don't bother with saving bits for existing records that don't provide them
+		if (!$created &&
+			(
+				empty($requested) ||
+				(is_array($requested) && empty($requested['bits']))
+			)
+		) {
+			return true;
+		}
+		
 		if ($this->settings[$Model->alias]['disabled']) {
 			return true;
 		}
