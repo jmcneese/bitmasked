@@ -52,7 +52,111 @@ There are several configurable options that can be passed into the behavior:
 
 h2. Examples
 
+Lets say we run a grocery store and want to easily query all the items that a user is allowed to even view. For this example we'll use items that have age restrictions. 
 
+First off, lets section off our groups into common restrictions. This is easy to do by adjusting our <code>bitmask</code> setting on the behavior for our model.
+
+<pre><code>
+public $actsAs = array(
+	'Bitmasked.Bitmasked' => array(
+		'bits' => array(
+			'ALL' => 1,
+			'18+' => 2,
+			'21+' => 4,
+			'55+' => 8
+		)
+	)
+);
+</code></pre>
+
+We've given each group an easy to remember name that we can reference later on in our queries. With that out of the way we can go ahead and create our items.
+
+<pre><code>
+ // Item for everyone.
+$this->Item->create();
+$this->Item->save(array(
+	'name' => 'Ice Cream',
+	'bits' => array(
+		'ALL',
+		'18+',
+		'21+',
+		'55+'
+	)
+));
+
+// Item for 18+ year olds
+$this->Item->create();
+$this->Item->save(array(
+	'name' => 'Cigarettes',
+	'bits' => array(
+		'18+',
+		'21+',
+		'55+'
+	)
+));
+
+// Item for 21+ year olds
+$this->Item->create();
+$this->Item->save(array(
+	'name' => 'Alcohol',
+	'bits' => array(
+		'21+',
+		'55+'
+	)
+));
+
+// Item for 55+ year olds
+$this->Item->create();
+$this->Item->save(array(
+	'name' => 'Lawn',
+	'bits' => array(
+		'55+'
+	)
+));
+</code></pre>
+
+Notice how for the items we saved the lowest matching group and all the above ones. Just because you're 28 doesn't mean you don't want ice cream, right?
+
+With those rows created we can easily get at only the rows that are applicable to be shown. Here's an example of finding everything that can be seen by an 18 year old.
+
+<pre><code>
+$items = $this->Item->find(
+	'all',
+	array(
+		'conditions' => array(),
+		'bitmask' => array(
+			'18+'
+		)
+	)
+);
+</code></pre>
+
+In our <code>$items</code> array we should have the "Ice Cream" and "Cigarettes" records available. Notice how we made use of the name of the group (<code>18+</code>) instead of the actual bitmask value.
+
+Instead of saving the items with all of their available groups, you can save them with their lowest group and instead query for all groups that the person is allowed; the same example would look like this
+
+<pre><code>
+ // Item for everyone. Note we only save "ALL"
+$this->Item->create();
+$this->Item->save(array(
+	'name' => 'Ice Cream',
+	'bits' => array(
+		'ALL'
+	)
+));
+
+// Query for an 18yr old. Notice how we include "ALL"
+$items = $this->Item->find(
+	'all',
+	array(
+		'conditions' => array(),
+		'bitmask' => array(
+			'ALL',
+			'18+'
+		)
+	)
+);
+</code></pre>
 
 h2. Todo
 
