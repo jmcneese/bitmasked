@@ -121,7 +121,7 @@ class BitmaskedBehavior extends ModelBehavior {
 			'foreign_id' => $Model->id,
 			'bits' => $this->settings[$Model->alias]['default']
 		);
-		if (!empty($Model->data[$Model->alias]['bits'])) {
+		if (isset($Model->data[$Model->alias]['bits'])) {
 			$requested = $Model->data[$Model->alias]['bits'];
 			unset($Model->data[$Model->alias]['bits']);
 		} elseif (!empty($Model->data['BitmaskedBit'])) {
@@ -131,7 +131,10 @@ class BitmaskedBehavior extends ModelBehavior {
 			$requested = $Model->data[$alias];
 			unset($Model->data[$alias]);
 		}
-
+		// if the bits are set to false and we are not a new record, delete any bit records
+		if($requested === false && !$created) {
+			return $this->deleteBitmaskedBit($Model);
+		}
 		// don't bother with saving bits for existing records that don't provide them
 		if (!$created &&
 			(
