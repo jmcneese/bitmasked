@@ -15,7 +15,7 @@
  *
  * @uses AppModel
  */
-class BitmaskedBit extends AppModel {
+class BitmaskedBit extends Model {
 
 	/**
 	 * @var array

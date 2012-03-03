@@ -91,8 +91,7 @@ class BitmaskedTestCase extends CakeTestCase {
 		$this->assertTrue($this->BitmaskedThing->Behaviors->attached('Bitmasked'));
 		$this->BitmaskedThing->Behaviors->detach('Bitmasked');
 		$this->BitmaskedThing->Behaviors->attach('Bitmasked', array(
-			'bits' => array(
-			)
+			'bits' => array()
 		));
 		$this->assertTrue($this->BitmaskedThing->Behaviors->Bitmasked->settings['BitmaskedThing']['disabled']);
 		$this->BitmaskedThing->Behaviors->detach('Bitmasked');
