@@ -215,9 +215,14 @@ class BitmaskedBehavior extends ModelBehavior {
 			$bitmask = $queryData['bitmask'];
 			unset($queryData['bitmask']);
 		}
-		if (isset($queryData['conditions']) && is_array($queryData['conditions']) && isset($queryData['conditions']['bitmask'])) {
-			$bitmask = $queryData['conditions']['bitmask'];
-			unset($queryData['conditions']['bitmask']);
+		if (isset($queryData['conditions']) && is_array($queryData['conditions'])) {
+			if (isset($queryData['conditions']['bitmask'])) {
+				$bitmask = $queryData['conditions']['bitmask'];
+				unset($queryData['conditions']['bitmask']);
+			} elseif (isset($queryData['conditions']["{$Model->alias}.{$this->settings[$Model->alias]['field']}"])) {
+				$bitmask = $queryData['conditions']["{$Model->alias}.{$this->settings[$Model->alias]['field']}"];
+				unset($queryData['conditions']["{$Model->alias}.{$this->settings[$Model->alias]['field']}"]);
+			}
 		}
 		if ($this->settings[$Model->alias]['disabled'] || $bitmask === false) {
 			$this->_unbind($Model);
@@ -308,6 +313,18 @@ class BitmaskedBehavior extends ModelBehavior {
 	 */
 	public function disableBitmasked(&$Model, $disable = true) {
 		$this->settings[$Model->alias]['disabled'] = $disable;
+	}
+
+	/**
+	 * get array of all possible bits/flags
+	 *
+	 * @param	Model	$Model
+	 * @return	array
+	 */
+	public function getAllBits(&$Model) {
+
+		return $this->settings[$Model->alias]['bits'];
+
 	}
 
 	/**
