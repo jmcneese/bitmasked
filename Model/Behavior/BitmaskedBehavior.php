@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @package		bitmasked
- * @subpackage	bitmasked.model.behavior
+ * @package		Bitmasked
+ * @subpackage	Bitmasked.Model.Behavior
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
@@ -23,9 +23,10 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * bind the Bitmask model to the model in question
 	 *
 	 * @param	Model	$Model
+	 * @param   array   $conditions
 	 * @return	boolean
 	 */
-	protected function _bind(&$Model, $conditions = array()) {
+	protected function _bind(Model $Model, $conditions = array()) {
 		$this->_unbind($Model);
 		$alias = $this->getBitmaskedBitAlias($Model);
 		return $Model->bindModel(array(
@@ -52,7 +53,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param   mixed	$flags
 	 * @return  integer
 	 */
-	protected function _flagsToBits(&$Model, $flags = array()) {
+	protected function _flagsToBits(Model $Model, $flags = array()) {
 		$bits = 0;
 		if (!empty($flags)) {
 			foreach ($flags as $flag) {
@@ -74,7 +75,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	mixed	$flag
 	 * @return	integer
 	 */
-	protected function _flagToBit(&$Model, $flag = null) {
+	protected function _flagToBit(Model $Model, $flag = null) {
 		$bits = $this->settings[$Model->alias]['bits'];
 		$flag = strtoupper($flag);
 		return empty($flag) || !array_key_exists($flag, $bits) ? false : $bits[$flag];
@@ -88,7 +89,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param  Model	$Model
 	 * @return boolean
 	 */
-	protected function _unbind(&$Model) {
+	protected function _unbind(Model $Model) {
 		return $Model->unbindModel(array(
 			'hasOne' => array(
 				$this->getBitmaskedBitAlias($Model)
@@ -107,7 +108,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	boolean	$created
 	 * @return	boolean
 	 */
-	public function afterSave(&$Model, $created) {
+	public function afterSave(Model $Model, $created) {
 		if($this->settings[$Model->alias]['consolidated']) {
 			$alias = $this->getBitmaskedBitAlias($Model);
 			$requested = array();
@@ -174,7 +175,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	boolean	$cascade
 	 * @return	mixed
 	 */
-	public function beforeDelete(&$Model, $cascade = true) {
+	public function beforeDelete(Model $Model, $cascade = true) {
 		if (
 			$this->settings[$Model->alias]['consolidated'] &&
 			!$this->settings[$Model->alias]['disabled'] &&
@@ -198,7 +199,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	array	$queryData
 	 * @return	mixed
 	 */
-	public function beforeFind(&$Model, $queryData) {
+	public function beforeFind(Model $Model, $queryData) {
 		$bitmask = null;
 		if (isset($queryData['bitmask'])) {
 			$bitmask = $queryData['bitmask'];
@@ -229,7 +230,7 @@ class BitmaskedBehavior extends ModelBehavior {
 					$bitmask = call_user_func($bitmask);
 					break;
 				case is_string($bitmask) && method_exists($Model, $bitmask):
-					$bitmask = call_user_func(array(&$Model, $bitmask));
+					$bitmask = call_user_func(array($Model, $bitmask));
 					break;
 				default:
 					$bitmask = $this->_flagToBit($Model, $bitmask);
@@ -245,7 +246,10 @@ class BitmaskedBehavior extends ModelBehavior {
 					"{$this->getBitmaskedBitAlias($Model)}.bits & {$bitmask} <> 0"
 				));
 			} else {
-				(array)$queryData['conditions'][] = "{$Model->alias}.{$this->settings[$Model->alias]['field']} & {$bitmask} <> 0";
+				if(!is_array($queryData['conditions'])) {
+					$queryData['conditions'] = array();
+				}
+				$queryData['conditions'][] = "{$Model->alias}.{$this->settings[$Model->alias]['field']} & {$bitmask} <> 0";
 			}
 		}
 		return $queryData;
@@ -259,7 +263,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param  Model	$Model
 	 * @return mixed
 	 */
-	public function beforeSave(&$Model) {
+	public function beforeSave(Model $Model) {
 		$alias = $this->getBitmaskedBitAlias($Model);
 		$field = $this->settings[$Model->alias]['field'];
 		if (!empty($Model->data[$Model->alias][$field]) && is_array($Model->data[$Model->alias][$field])) {
@@ -281,7 +285,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	mixed	$id
 	 * @return	mixed
 	 */
-	public function deleteBitmaskedBit(&$Model, $id = null) {
+	public function deleteBitmaskedBit(Model $Model, $id = null) {
 		if($this->settings[$Model->alias]['consolidated']) {
 			$id = empty($id) ? $Model->id : $id;
 			if (empty($id)) {
@@ -306,7 +310,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	boolean	$disable
 	 * @return	null
 	 */
-	public function disableBitmasked(&$Model, $disable = true) {
+	public function disableBitmasked(Model $Model, $disable = true) {
 		$this->settings[$Model->alias]['disabled'] = $disable;
 	}
 
@@ -318,7 +322,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	Model	$Model
 	 * @return	array
 	 */
-	public function getAllBits(&$Model) {
+	public function getAllBits(Model $Model) {
 
 		return $this->settings[$Model->alias]['bits'];
 
@@ -333,7 +337,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	integer	$id
 	 * @return	mixed
 	 */
-	public function getBits(&$Model, $id = null) {
+	public function getBits(Model $Model, $id = null) {
 		$id = empty($id) ? $Model->id : $id;
 		if (empty($id)) {
 			return false;
@@ -359,7 +363,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	mixed	$id
 	 * @return	mixed
 	 */
-	public function getBitmaskedBit(&$Model, $id = null) {
+	public function getBitmaskedBit(Model $Model, $id = null) {
 		$id = empty($id) ? $Model->id : $id;
 		if (empty($id)) {
 			return false;
@@ -390,7 +394,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	Model	$Model
 	 * @return	mixed
 	 */
-	public function getBitmaskedBitAlias(&$Model) {
+	public function getBitmaskedBitAlias(Model $Model) {
 		return $this->settings[$Model->alias]['consolidated']
 			? "{$Model->alias}BitmaskedBit"
 			: false;
@@ -406,7 +410,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	integer	$bit
 	 * @return	boolean
 	 */
-	public function hasBit(&$Model, $id = null, $bit = null) {
+	public function hasBit(Model $Model, $id = null, $bit = null) {
 		$id = empty($id) ? $Model->id : $id;
 		if (empty($id) || empty($bit)) {
 			return false;
@@ -432,7 +436,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	Model	$Model
 	 * @return	boolean
 	 */
-	public function isBitmaskedDisabled(&$Model) {
+	public function isBitmaskedDisabled(Model $Model) {
 		return $this->settings[$Model->alias]['disabled'];
 	}
 
@@ -443,7 +447,7 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @param	array	$config
 	 * @return	void
 	 */
-	public function setup(&$Model, $config = array()) {
+	public function setup(Model $Model, $config = array()) {
 		$this->settings[$Model->alias] = array_merge(array(
 			'consolidated' => true,
 			'field' => 'bits',
