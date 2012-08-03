@@ -2,10 +2,10 @@
 
 /**
  * @package		bitmasked
- * @subpackage	bitmasked.tests.cases.behaviors
+ * @subpackage	bitmasked.model
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
  */
 
 /**
@@ -15,9 +15,11 @@
  *
  * @uses AppModel
  */
-class BitmaskedBit extends Model {
+class BitmaskedBit extends AppModel {
 
 	/**
+	 * Validations
+	 *
 	 * @var array
 	 */
 	public $validate = array(
@@ -48,5 +50,3 @@ class BitmaskedBit extends Model {
 	);
 
 }
-
-?>

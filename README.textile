@@ -5,7 +5,7 @@ Row-level filtering of models via bitmasks.
 h2. Requirements
 
 * PHP5.2+ (Fully featured with 5.3+)
-* CakePHP 1.3+
+* CakePHP 2.0+
 
 h2. Installation
 
@@ -19,14 +19,14 @@ h3. Manual
 h3. GIT Submodule
 
 From your repository root directory type:
-<pre><code>git submodule add git://github.com/jmcneese/bitmasked.git app/plugins/bitmasked
+<pre><code>git submodule add git://github.com/jmcneese/bitmasked.git app/Plugin/Bitmasked
 git submodule update --init
 </code></pre>
 
 h3. GIT Clone
 
 In your plugin directory type
-<pre><code>git clone git://github.com/jmcneese/bitmasked.git</code></pre>
+<pre><code>git clone git://github.com/jmcneese/bitmasked.git Bitmasked</code></pre>
 
 h2. Usage
 
@@ -164,7 +164,7 @@ h2. Todo
 
 h2. License
 
-Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
+Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

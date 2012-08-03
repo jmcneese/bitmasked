@@ -5,17 +5,19 @@
  * @subpackage	bitmasked.tests.cases.behaviors
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
  */
 
 /**
- * Bitmasked Thing Model
+ * BitmaskedThing
  *
  * @uses CakeTestModel
  */
 class BitmaskedThing extends CakeTestModel {
 
 	/**
+	 * Behaviors
+	 *
 	 * @var array
 	 */
 	public $actsAs = array(
@@ -30,6 +32,8 @@ class BitmaskedThing extends CakeTestModel {
 	);
 
 	/**
+	 * getMask method
+	 *
 	 * Helper method for custom mask functions
 	 *
 	 * @return integer
@@ -41,6 +45,8 @@ class BitmaskedThing extends CakeTestModel {
 }
 
 /**
+ * getCustomMask function
+ *
  * Custom loose function for callback test
  *
  * @return integer
@@ -50,14 +56,18 @@ function getCustomMask() {
 }
 
 /**
- * Bitmasked Test Case
+ * BitmaskedTest
  *
- * @see		BitmaskedBehavior
- * @uses	CakeTestCase
+ * @see		    BitmaskedBehavior
+ * @property    BitmaskedThing  BitmaskedThing
+ * @property    BitmaskedBit    BitmaskedBit
+ * @uses	    CakeTestCase
  */
-class BitmaskedTestCase extends CakeTestCase {
+class BitmaskedBehaviorTest extends CakeTestCase {
 
 	/**
+	 * Fixtures
+	 *
 	 * @var array
 	 */
 	public $fixtures = array(
@@ -66,36 +76,29 @@ class BitmaskedTestCase extends CakeTestCase {
 	);
 
 	/**
+	 * setUp method
+	 *
 	 * @return void
 	 */
-	public function startTest($method = null) {
-		parent::startTest($method);
+	public function setUp() {
+		parent::setUp();
 		$this->BitmaskedThing = ClassRegistry::init('Bitmasked.BitmaskedThing');
+		$this->BitmaskedBit = ClassRegistry::init('Bitmasked.BitmaskedBit');
 	}
 
 	/**
-	 * @return void
-	 */
-	public function endTest($method = null) {
-		parent::endTest($method);
-		ClassRegistry::removeObject('BitmaskedThing');
-	}
-
-	/**
-	 * Test Instance Creation
+	 * Test Setup
 	 *
 	 * @return void
 	 */
 	public function testSetup() {
-		$this->assertIsA($this->BitmaskedThing, 'Model');
-		$this->assertTrue($this->BitmaskedThing->Behaviors->attached('Bitmasked'));
-		$this->BitmaskedThing->Behaviors->detach('Bitmasked');
-		$this->BitmaskedThing->Behaviors->attach('Bitmasked', array(
+		$this->BitmaskedThing->Behaviors->unload('Bitmasked');
+		$this->BitmaskedThing->Behaviors->load('Bitmasked', array(
 			'bits' => array()
 		));
 		$this->assertTrue($this->BitmaskedThing->Behaviors->Bitmasked->settings['BitmaskedThing']['disabled']);
-		$this->BitmaskedThing->Behaviors->detach('Bitmasked');
-		$this->BitmaskedThing->Behaviors->attach('Bitmasked', array(
+		$this->BitmaskedThing->Behaviors->unload('Bitmasked');
+		$this->BitmaskedThing->Behaviors->load('Bitmasked', array(
 			'bits' => array(
 				'FOO',
 				'BAR'
@@ -114,8 +117,10 @@ class BitmaskedTestCase extends CakeTestCase {
 	 * @return void
 	 */
 	public function testGetBitmaskedBitAlias() {
-		$result = $this->BitmaskedThing->getBitmaskedBitAlias();
-		$this->assertEqual($result, $this->BitmaskedThing->alias . 'BitmaskedBit');
+		$this->assertEqual(
+			$this->BitmaskedThing->getBitmaskedBitAlias(),
+			$this->BitmaskedThing->alias . 'BitmaskedBit'
+		);
 	}
 
 	/**
@@ -124,8 +129,7 @@ class BitmaskedTestCase extends CakeTestCase {
 	 * @return void
 	 */
 	public function testIsBitmaskedDisabled() {
-		$result = $this->BitmaskedThing->isBitmaskedDisabled();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->isBitmaskedDisabled());
 	}
 
 	/**
@@ -135,11 +139,9 @@ class BitmaskedTestCase extends CakeTestCase {
 	 */
 	public function testDisableBitmasked() {
 		$this->BitmaskedThing->disableBitmasked();
-		$result = $this->BitmaskedThing->isBitmaskedDisabled();
-		$this->assertTrue($result);
+		$this->assertTrue($result = $this->BitmaskedThing->isBitmaskedDisabled());
 		$this->BitmaskedThing->disableBitmasked(false);
-		$result = $this->BitmaskedThing->isBitmaskedDisabled();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->isBitmaskedDisabled());
 	}
 
 	/**
@@ -150,19 +152,15 @@ class BitmaskedTestCase extends CakeTestCase {
 	public function testGetBitmaskedBit() {
 		$id = 4;
 		// test with missing id
-		$result = $this->BitmaskedThing->getBitmaskedBit();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit());
 		// test with bad id
-		$result = $this->BitmaskedThing->getBitmaskedBit(999);
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit(999));
 		// test with explicit id
 		$result = $this->BitmaskedThing->getBitmaskedBit($id);
-		$this->assertTrue($result);
 		$this->assertTrue(Set::matches("/BitmaskedThingBitmaskedBit[foreign_id={$id}]", $result));
 		// test with implicit id
 		$this->BitmaskedThing->id = $id;
 		$result = $this->BitmaskedThing->getBitmaskedBit();
-		$this->assertTrue($result);
 		$this->assertTrue(Set::matches("/BitmaskedThingBitmaskedBit[foreign_id={$id}]", $result));
 	}
 
@@ -174,16 +172,13 @@ class BitmaskedTestCase extends CakeTestCase {
 	public function testDeleteBitmaskedBit() {
 		$id = 4;
 		// test with missing id
-		$result = $this->BitmaskedThing->deleteBitmaskedBit();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->deleteBitmaskedBit());
 		// test with explicit id
-		$result = $this->BitmaskedThing->deleteBitmaskedBit($id);
-		$this->assertTrue($result);
+		$this->assertTrue($this->BitmaskedThing->deleteBitmaskedBit($id));
 		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit($id));
 		// test with implicit id
 		$this->BitmaskedThing->id = $id;
-		$result = $this->BitmaskedThing->deleteBitmaskedBit();
-		$this->assertTrue($result);
+		$this->assertTrue($this->BitmaskedThing->deleteBitmaskedBit());
 		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit($id));
 	}
 
@@ -195,20 +190,14 @@ class BitmaskedTestCase extends CakeTestCase {
 	public function testGetBits() {
 		$id = 1;
 		// test with missing id
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->getBits());
 		// test with bad id
-		$result = $this->BitmaskedThing->getBits(999);
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->getBits(999));
 		// test with explicit id
-		$result = $this->BitmaskedThing->getBits($id);
-		$this->assertTrue($result);
-		$this->assertTrue($result & 1);
+		$this->assertEqual(1, $this->BitmaskedThing->getBits($id) & 1);
 		// test with implicit id
 		$this->BitmaskedThing->id = $id;
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertTrue($result & 1);
+		$this->assertEqual(1, $this->BitmaskedThing->getBits() & 1);
 	}
 
 	/**
@@ -231,8 +220,7 @@ class BitmaskedTestCase extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->getBits());
 		// test enabled
 		$this->BitmaskedThing->disableBitmasked(false);
 		$this->BitmaskedThing->create();
@@ -245,9 +233,7 @@ class BitmaskedTestCase extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertEqual($bits, $result);
+		$this->assertEqual($bits, $this->BitmaskedThing->getBits());
 		// test alternate data formats
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
@@ -257,9 +243,7 @@ class BitmaskedTestCase extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertEqual($bits, $result);
+		$this->assertEqual($bits, $this->BitmaskedThing->getBits());
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
 			'BitmaskedThing' => array(
@@ -271,9 +255,7 @@ class BitmaskedTestCase extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertEqual($bits, $result);
+		$this->assertEqual($bits, $this->BitmaskedThing->getBits());
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
 			'BitmaskedThing' => array(
@@ -287,9 +269,7 @@ class BitmaskedTestCase extends CakeTestCase {
 				)
 			)
 		));
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertEqual($result, 3);
+		$this->assertEqual(3, $this->BitmaskedThing->getBits());
 		// test bad data
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
@@ -303,8 +283,7 @@ class BitmaskedTestCase extends CakeTestCase {
 				'bits' => 'xxx'
 			)
 		));
-		$result = $this->BitmaskedThing->getBits();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->getBits());
 	}
 
 	/**
@@ -315,7 +294,6 @@ class BitmaskedTestCase extends CakeTestCase {
 	 * @return 	void
 	 */
 	public function testUpdateWithoutBits() {
-
 		// first lets set up a thing and give it some non-default bits
 		$this->BitmaskedThing->id = 1;
 		$newBits = 12;
@@ -327,26 +305,17 @@ class BitmaskedTestCase extends CakeTestCase {
 			)
 		));
 		$resultingBits = $this->BitmaskedThing->getBits();
-
-		$this->assertTrue($resultingBits);
-		$this->assertEqual($resultingBits, $newBits);
-		$this->assertNotEqual($resultingBits, $oldBits);
-
-		// now lets test to ensure updating the Thing will not impact its bits 
+		$this->assertEqual($newBits, $resultingBits);
+		$this->assertNotEqual($oldBits, $resultingBits);
+		// now lets test to ensure updating the Thing will not impact its bits
 		$this->BitmaskedThing->create(null);
-		$result = $this->BitmaskedThing->save(array(
+		$this->BitmaskedThing->save(array(
 			'id' => 1,
 			'name' => 'newname'	
 		));
-
-		$this->assertTrue($result);
-
 		$this->BitmaskedThing->id = 1;
 		$bits = $this->BitmaskedThing->getBits();
-
-		$this->assertEqual($bits, $resultingBits, "Bits should NOT have changed after the update");
-
-
+		$this->assertEqual($resultingBits, $bits, "Bits should NOT have changed after the update");
 	}
 
 	/**
@@ -355,7 +324,6 @@ class BitmaskedTestCase extends CakeTestCase {
 	 * @return void
 	 */
 	public function testAfterSaveUpdate() {
-
 		$this->BitmaskedThing->id = 1;
 		$newBits = 12;
 		$oldBits = $this->BitmaskedThing->getBits();
@@ -366,10 +334,8 @@ class BitmaskedTestCase extends CakeTestCase {
 			)
 		));
 		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertEqual($result, $newBits);
-		$this->assertNotEqual($result, $oldBits);
-
+		$this->assertEqual($newBits, $result);
+		$this->assertNotEqual($oldBits, $result);
 		$this->BitmaskedThing->create(null);
 		$newBits = 11;
 		$oldBits = $this->BitmaskedThing->getBits();
@@ -381,19 +347,15 @@ class BitmaskedTestCase extends CakeTestCase {
 			)
 		));
 		$result = $this->BitmaskedThing->getBits();
-		$this->assertTrue($result);
-		$this->assertEqual($result, $newBits);
-		$this->assertNotEqual($result, $oldBits);
-
+		$this->assertEqual($newBits, $result);
+		$this->assertNotEqual($oldBits, $result);
 		$result = ClassRegistry::init('Bitmasked.BitmaskedBit')->find('all', array(
 			'conditions' => array(
 				'BitmaskedBit.foreign_id' => 1,
 				'BitmaskedBit.model' => 'BitmaskedThing'
 			)
 		));
-
-		$this->assertEqual(count($result), 1);
-
+		$this->assertCount(1, $result);
 	}
 
 	/**
@@ -404,26 +366,25 @@ class BitmaskedTestCase extends CakeTestCase {
 	public function testBeforeDelete() {
 		// test enabled
 		$id = 1;
-		$alias = $this->BitmaskedThing->getBitmaskedBitAlias();
 		$this->BitmaskedThing->delete($id);
-		$result = $this->BitmaskedThing->{$alias}->find('count', array(
+		$result = $this->BitmaskedBit->find('count', array(
 			'conditions' => array(
-				"{$alias}.model" => 'BitmaskedThing',
-				"{$alias}.foreign_id" => $id
+				"BitmaskedBit.model" => 'BitmaskedThing',
+				"BitmaskedBit.foreign_id" => $id
 			)
 		));
-		$this->assertFalse($result);
+		$this->assertEqual(0, $result);
 		// test disabled
 		$this->BitmaskedThing->disableBitmasked();
 		$id = 2;
 		$this->BitmaskedThing->delete($id);
-		$result = $this->BitmaskedThing->{$alias}->find('count', array(
+		$result = $this->BitmaskedBit->find('count', array(
 			'conditions' => array(
-				"{$alias}.model" => 'BitmaskedThing',
-				"{$alias}.foreign_id" => $id
+				"BitmaskedBit.model" => 'BitmaskedThing',
+				"BitmaskedBit.foreign_id" => $id
 			)
 		));
-		$this->assertTrue($result);
+		$this->assertGreaterThan(0, $result);
 	}
 
 	/**
@@ -438,8 +399,8 @@ class BitmaskedTestCase extends CakeTestCase {
 		$result = $this->BitmaskedThing->find('all', array(
 			'bitmask' => 1
 		));
-		$this->assertFalse(Set::extract("/{$alias}/.", $result));
-		$this->assertEqual(count($result), 4);
+		$this->assertEmpty(Set::extract("/{$alias}/.", $result));
+		$this->assertCount(4, $result);
 		// test enabled
 		$this->BitmaskedThing->disableBitmasked(false);
 		// test with top-level query option
@@ -447,14 +408,14 @@ class BitmaskedTestCase extends CakeTestCase {
 			'bitmask' => 1
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=1]", $result1));
-		$this->assertEqual(count($result1), 1);
+		$this->assertCount(1, $result1);
 		// test with condition-level query option
 		$result2 = $this->BitmaskedThing->find('all', array(
 			'conditions' => array(
 				'bitmask' => 1
 			)
 		));
-		$this->assertEqual($result2, $result1);
+		$this->assertEqual($result1, $result2);
 		if (floatval(PHP_VERSION) >= 5.3) {
 			// test closure bitmask callback
 			$result = $this->BitmaskedThing->find('all', array(
@@ -463,26 +424,26 @@ class BitmaskedTestCase extends CakeTestCase {
 				}
 			));
 			$this->assertTrue(Set::matches("/{$alias}[bits=12]", $result));
-			$this->assertEqual(count($result), 2);
+			$this->assertCount(2, $result);
 		}
 		// test model method bitmask callback
 		$result = $this->BitmaskedThing->find('all', array(
 			'bitmask' => 'getMask'
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=2]", $result));
-		$this->assertEqual(count($result), 1);
+		$this->assertCount(1, $result);
 		// test global function bitmask callback
 		$result = $this->BitmaskedThing->find('all', array(
 			'bitmask' => 'getCustomMask'
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=4]", $result));
-		$this->assertEqual(count($result), 2);
+		$this->assertCount(2, $result);
 		// test flag (string) bitmask
 		$result = $this->BitmaskedThing->find('all', array(
 			'bitmask' => '18PLUS'
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=4]", $result));
-		$this->assertEqual(count($result), 2);
+		$this->assertCount(2, $result);
 		// test flags (array) bitmask
 		$result = $this->BitmaskedThing->find('all', array(
 			'bitmask' => array(
@@ -491,7 +452,7 @@ class BitmaskedTestCase extends CakeTestCase {
 			)
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=12]", $result));
-		$this->assertEqual(count($result), 2);
+		$this->assertCount(2, $result);
 	}
 
 	/**
@@ -503,24 +464,18 @@ class BitmaskedTestCase extends CakeTestCase {
 		$id = 1;
 		$bit = 1;
 		// test with missing id
-		$result = $this->BitmaskedThing->hasBit();
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->hasBit());
 		// test with bad id
-		$result = $this->BitmaskedThing->hasBit(999, $bit);
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->hasBit(999, $bit));
 		// test with explicit id
-		$result = $this->BitmaskedThing->hasBit($id, $bit);
-		$this->assertTrue($result);
+		$this->assertTrue($this->BitmaskedThing->hasBit($id, $bit));
 		// test with implicit id
 		$this->BitmaskedThing->id = $id;
-		$result = $this->BitmaskedThing->hasBit(null, $bit);
-		$this->assertTrue($result);
+		$this->assertTrue($this->BitmaskedThing->hasBit(null, $bit));
 		// test with string bit
-		$result = $this->BitmaskedThing->hasBit($id, 'ALL');
-		$this->assertTrue($result);
+		$this->assertTrue($this->BitmaskedThing->hasBit($id, 'ALL'));
 		// test with bad string bit
-		$result = $this->BitmaskedThing->hasBit($id, 'SHOOP');
-		$this->assertFalse($result);
+		$this->assertFalse($this->BitmaskedThing->hasBit($id, 'SHOOP'));
 		// test with a missing bit
 		$alias = $this->BitmaskedThing->getBitmaskedBitAlias();
 		$this->BitmaskedThing->create();
@@ -541,5 +496,3 @@ class BitmaskedTestCase extends CakeTestCase {
 	}
 
 }
-
-?>
