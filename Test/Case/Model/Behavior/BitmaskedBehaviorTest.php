@@ -152,9 +152,9 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 	public function testGetBitmaskedBit() {
 		$id = 4;
 		// test with missing id
-		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit());
+		$this->assertEmpty($this->BitmaskedThing->getBitmaskedBit());
 		// test with bad id
-		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit(999));
+		$this->assertEmpty($this->BitmaskedThing->getBitmaskedBit(999));
 		// test with explicit id
 		$result = $this->BitmaskedThing->getBitmaskedBit($id);
 		$this->assertTrue(Set::matches("/BitmaskedThingBitmaskedBit[foreign_id={$id}]", $result));
@@ -175,11 +175,11 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 		$this->assertFalse($this->BitmaskedThing->deleteBitmaskedBit());
 		// test with explicit id
 		$this->assertTrue($this->BitmaskedThing->deleteBitmaskedBit($id));
-		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit($id));
+		$this->assertEmpty($this->BitmaskedThing->getBitmaskedBit($id));
 		// test with implicit id
 		$this->BitmaskedThing->id = $id;
 		$this->assertTrue($this->BitmaskedThing->deleteBitmaskedBit());
-		$this->assertFalse($this->BitmaskedThing->getBitmaskedBit($id));
+		$this->assertEmpty($this->BitmaskedThing->getBitmaskedBit($id));
 	}
 
 	/**
@@ -453,6 +453,21 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 		));
 		$this->assertTrue(Set::matches("/{$alias}[bits=12]", $result));
 		$this->assertCount(2, $result);
+	}
+
+	/**
+	 * ensure beforeFind supports inverse bit queries via 'bitmask' key
+	 *
+	 * @return	void
+	 */
+	public function testBeforeFindAllowsFilteringByInverseBit() {
+
+		$alias = $this->BitmaskedThing->getBitmaskedBitAlias();
+		$result1 = $this->BitmaskedThing->find('all', array(
+			'bitmask' => '~1'
+		));
+		$this->assertEmpty(Set::matches("/{$alias}[bits=1]", $result1), "Expect no results with bitmask value of 1");
+
 	}
 
 	/**

@@ -200,7 +200,10 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @return	mixed
 	 */
 	public function beforeFind(Model $Model, $queryData) {
+
+		$inverse = null;
 		$bitmask = null;
+
 		if (isset($queryData['bitmask'])) {
 			$bitmask = $queryData['bitmask'];
 			unset($queryData['bitmask']);
@@ -221,6 +224,11 @@ class BitmaskedBehavior extends ModelBehavior {
 		$bitmask = empty($bitmask) // nothing was specified in $queryData
 			? $this->settings[$Model->alias]['mask'] // use config
 			: $bitmask;
+
+		if (is_string($bitmask) && strpos($bitmask, '~') === 0) { // handle inverse
+			$bitmask = substr($bitmask, 1);
+			$inverse = '~';
+		}
 		if (!is_numeric($bitmask)) {
 			switch (true) {
 				case is_array($bitmask):
@@ -243,13 +251,13 @@ class BitmaskedBehavior extends ModelBehavior {
 				 * requisite bits
 				 */
 				$this->_bind($Model, array(
-					"{$this->getBitmaskedBitAlias($Model)}.bits & {$bitmask} <> 0"
+					"{$this->getBitmaskedBitAlias($Model)}.bits & {$inverse}{$bitmask} <> 0"
 				));
 			} else {
 				if(!is_array($queryData['conditions'])) {
 					$queryData['conditions'] = array();
 				}
-				$queryData['conditions'][] = "{$Model->alias}.{$this->settings[$Model->alias]['field']} & {$bitmask} <> 0";
+				$queryData['conditions'][] = "{$Model->alias}.{$this->settings[$Model->alias]['field']} & {$inverse}{$bitmask} <> 0";
 			}
 		}
 		return $queryData;
