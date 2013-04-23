@@ -245,19 +245,24 @@ class BitmaskedBehavior extends ModelBehavior {
 			}
 		}
 		if(!empty($bitmask)) {
-			if($this->settings[$Model->alias]['consolidated']) {
+
+			$bit_condition = empty($inverse)
+				? "{$bitmask} <> 0"
+				: "{$bitmask} = 0";
+
+			if ($this->settings[$Model->alias]['consolidated']) {
 				/**
 				 * bind the BitmaskedBit model as an INNER JOIN to the existing query, filtering out records without the
 				 * requisite bits
 				 */
 				$this->_bind($Model, array(
-					"{$this->getBitmaskedBitAlias($Model)}.bits & {$inverse}{$bitmask} <> 0"
+					"{$this->getBitmaskedBitAlias($Model)}.bits & {$bit_condition}"
 				));
 			} else {
 				if(!is_array($queryData['conditions'])) {
 					$queryData['conditions'] = array();
 				}
-				$queryData['conditions'][] = "{$Model->alias}.{$this->settings[$Model->alias]['field']} & {$inverse}{$bitmask} <> 0";
+				$queryData['conditions'][] = "{$Model->alias}.{$this->settings[$Model->alias]['field']} & {$bit_condition}";
 			}
 		}
 		return $queryData;
