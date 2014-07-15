@@ -1,12 +1,9 @@
 <?php
 
-/**
- * @package		Bitmasked
- * @subpackage	Bitmasked.Test.Case.Model.Behavior
- * @author		Joshua McNeese <jmcneese@gmail.com>
- * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
- */
+App::uses('CakeTestCase', 'TestSuite');
+App::uses('CakeTestModel', 'TestSuite/Fixture');
+App::uses('BitmaskedBit', 'Bitmasked.Model');
+App::uses('Bitmaskedt', 'Bitmasked.Model/Behavior');
 
 /**
  * BitmaskedThing
@@ -56,8 +53,13 @@ function getCustomMask() {
 }
 
 /**
- * BitmaskedTest
+ * BitmaskedBehaviorTest
  *
+ * @package		Bitmasked
+ * @subpackage	Bitmasked.Test.Case.Model.Behavior
+ * @author		Joshua McNeese <jmcneese@gmail.com>
+ * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
  * @see		    BitmaskedBehavior
  * @property    BitmaskedThing  BitmaskedThing
  * @property    BitmaskedBit    BitmaskedBit
@@ -104,7 +106,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				'BAR'
 			)
 		));
-		$this->assertEqual($this->BitmaskedThing->Behaviors->Bitmasked->settings['BitmaskedThing']['bits'], array(
+		$this->assertEquals($this->BitmaskedThing->Behaviors->Bitmasked->settings['BitmaskedThing']['bits'], array(
 			'ALL' => 1,
 			'FOO' => 2,
 			'BAR' => 4
@@ -117,7 +119,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 	 * @return void
 	 */
 	public function testGetBitmaskedBitAlias() {
-		$this->assertEqual(
+		$this->assertEquals(
 			$this->BitmaskedThing->getBitmaskedBitAlias(),
 			$this->BitmaskedThing->alias . 'BitmaskedBit'
 		);
@@ -194,10 +196,10 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 		// test with bad id
 		$this->assertFalse($this->BitmaskedThing->getBits(999));
 		// test with explicit id
-		$this->assertEqual(1, $this->BitmaskedThing->getBits($id) & 1);
+		$this->assertEquals(1, $this->BitmaskedThing->getBits($id) & 1);
 		// test with implicit id
 		$this->BitmaskedThing->id = $id;
-		$this->assertEqual(1, $this->BitmaskedThing->getBits() & 1);
+		$this->assertEquals(1, $this->BitmaskedThing->getBits() & 1);
 	}
 
 	/**
@@ -233,7 +235,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$this->assertEqual($bits, $this->BitmaskedThing->getBits());
+		$this->assertEquals($bits, $this->BitmaskedThing->getBits());
 		// test alternate data formats
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
@@ -243,7 +245,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$this->assertEqual($bits, $this->BitmaskedThing->getBits());
+		$this->assertEquals($bits, $this->BitmaskedThing->getBits());
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
 			'BitmaskedThing' => array(
@@ -255,7 +257,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				'bits' => $bits
 			)
 		));
-		$this->assertEqual($bits, $this->BitmaskedThing->getBits());
+		$this->assertEquals($bits, $this->BitmaskedThing->getBits());
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
 			'BitmaskedThing' => array(
@@ -269,7 +271,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				)
 			)
 		));
-		$this->assertEqual(3, $this->BitmaskedThing->getBits());
+		$this->assertEquals(3, $this->BitmaskedThing->getBits());
 		// test bad data
 		$this->BitmaskedThing->create();
 		$this->BitmaskedThing->save(array(
@@ -305,17 +307,17 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 			)
 		));
 		$resultingBits = $this->BitmaskedThing->getBits();
-		$this->assertEqual($newBits, $resultingBits);
-		$this->assertNotEqual($oldBits, $resultingBits);
+		$this->assertEquals($newBits, $resultingBits);
+		$this->assertNotEquals($oldBits, $resultingBits);
 		// now lets test to ensure updating the Thing will not impact its bits
 		$this->BitmaskedThing->create(null);
 		$this->BitmaskedThing->save(array(
 			'id' => 1,
-			'name' => 'newname'	
+			'name' => 'newname'
 		));
 		$this->BitmaskedThing->id = 1;
 		$bits = $this->BitmaskedThing->getBits();
-		$this->assertEqual($resultingBits, $bits, "Bits should NOT have changed after the update");
+		$this->assertEquals($resultingBits, $bits, "Bits should NOT have changed after the update");
 	}
 
 	/**
@@ -334,8 +336,8 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 			)
 		));
 		$result = $this->BitmaskedThing->getBits();
-		$this->assertEqual($newBits, $result);
-		$this->assertNotEqual($oldBits, $result);
+		$this->assertEquals($newBits, $result);
+		$this->assertNotEquals($oldBits, $result);
 		$this->BitmaskedThing->create(null);
 		$newBits = 11;
 		$oldBits = $this->BitmaskedThing->getBits();
@@ -347,8 +349,8 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 			)
 		));
 		$result = $this->BitmaskedThing->getBits();
-		$this->assertEqual($newBits, $result);
-		$this->assertNotEqual($oldBits, $result);
+		$this->assertEquals($newBits, $result);
+		$this->assertNotEquals($oldBits, $result);
 		$result = ClassRegistry::init('Bitmasked.BitmaskedBit')->find('all', array(
 			'conditions' => array(
 				'BitmaskedBit.foreign_id' => 1,
@@ -373,7 +375,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				"BitmaskedBit.foreign_id" => $id
 			)
 		));
-		$this->assertEqual(0, $result);
+		$this->assertEquals(0, $result);
 		// test disabled
 		$this->BitmaskedThing->disableBitmasked();
 		$id = 2;
@@ -415,7 +417,7 @@ class BitmaskedBehaviorTest extends CakeTestCase {
 				'bitmask' => 1
 			)
 		));
-		$this->assertEqual($result1, $result2);
+		$this->assertEquals($result1, $result2);
 		if (floatval(PHP_VERSION) >= 5.3) {
 			// test closure bitmask callback
 			$result = $this->BitmaskedThing->find('all', array(

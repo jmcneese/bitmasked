@@ -1,17 +1,16 @@
 <?php
 
+App::uses('CakeTestFixture', 'TestSuite/Fixture');
+
 /**
+ * BitmaskedBitFixture
+ *
  * @package		Bitmasked
  * @subpackage	Bitmasked.Test.Fixture
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
- */
-
-/**
- * BitmaskedBitFixture
- *
- * @uses CakeTestFixture
+ * @uses 		CakeTestFixture
  */
 class BitmaskedBitFixture extends CakeTestFixture {
 

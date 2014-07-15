@@ -1,19 +1,20 @@
 <?php
 
-/**
- * @package		Bitmasked
- * @subpackage	Bitmasked.Model.Behavior
- * @author		Joshua McNeese <jmcneese@gmail.com>
- * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
- */
+App::uses('Hash', 'Utility');
+App::uses('ModelBehavior', 'Model');
+App::uses('BitmaskedBit', 'Bitmasked.Model');
 
 /**
  * BitmaskedBehavior
  *
  * An implementation of bitwise masks for row-level operations.
  *
- * @uses ModelBehavior
+ * @package		Bitmasked
+ * @subpackage	Bitmasked.Model.Behavior
+ * @author		Joshua McNeese <jmcneese@gmail.com>
+ * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
+ * @uses 		ModelBehavior
  */
 class BitmaskedBehavior extends ModelBehavior {
 
@@ -106,9 +107,10 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * @author	Ryan Morris
 	 * @param	Model	$Model
 	 * @param	boolean	$created
+	 * @param	array	$options
 	 * @return	boolean
 	 */
-	public function afterSave(Model $Model, $created) {
+	public function afterSave(Model $Model, $created, $options = array()) {
 		if($this->settings[$Model->alias]['consolidated']) {
 			$alias = $this->getBitmaskedBitAlias($Model);
 			$requested = array();
@@ -180,7 +182,7 @@ class BitmaskedBehavior extends ModelBehavior {
 			$this->settings[$Model->alias]['consolidated'] &&
 			!$this->settings[$Model->alias]['disabled'] &&
 			$cascade &&
-			!$Model->Behaviors->attached('SoftDeletable')
+			!$Model->Behaviors->loaded('SoftDeletable')
 		) {
 			$this->_bind($Model);
 		} else {
@@ -269,9 +271,10 @@ class BitmaskedBehavior extends ModelBehavior {
 	 * turn arrays of flags into bits, if necessary
 	 *
 	 * @param  Model	$Model
+	 * @param  array	$options
 	 * @return mixed
 	 */
-	public function beforeSave(Model $Model) {
+	public function beforeSave(Model $Model, $options = array()) {
 		$alias = $this->getBitmaskedBitAlias($Model);
 		$field = $this->settings[$Model->alias]['field'];
 		if (!empty($Model->data[$Model->alias][$field]) && is_array($Model->data[$Model->alias][$field])) {
@@ -281,7 +284,7 @@ class BitmaskedBehavior extends ModelBehavior {
 		} elseif (!empty($Model->data[$alias]['bits']) && is_array($Model->data[$alias]['bits'])) {
 			$Model->data[$alias]['bits'] = $this->_flagsToBits($Model, $Model->data[$alias]['bits']);
 		}
-		return parent::beforeSave($Model);
+		return parent::beforeSave($Model, $options);
 	}
 
 	/**
@@ -469,7 +472,7 @@ class BitmaskedBehavior extends ModelBehavior {
 		if (empty($this->settings[$Model->alias]['bits'])) {
 			$this->disableBitmasked($Model);
 		} else {
-			if (Set::numeric(array_keys($this->settings[$Model->alias]['bits']))) {
+			if (Hash::numeric(array_keys($this->settings[$Model->alias]['bits']))) {
 				$last = 1;
 				$bits = array('ALL' => 1);
 				foreach ($this->settings[$Model->alias]['bits'] as $flag) {

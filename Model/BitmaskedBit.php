@@ -1,19 +1,18 @@
 <?php
 
-/**
- * @package		Bitmasked
- * @subpackage	Bitmasked.Model
- * @author		Joshua McNeese <jmcneese@gmail.com>
- * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
- */
+App::uses('AppModel', 'Model');
 
 /**
  * BitmaskedBit Model
  *
  * Model for manipulating bitmask data
  *
- * @uses AppModel
+ * @package		Bitmasked
+ * @subpackage	Bitmasked.Model
+ * @author		Joshua McNeese <jmcneese@gmail.com>
+ * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
+ * @uses 		AppModel
  */
 class BitmaskedBit extends AppModel {
 
