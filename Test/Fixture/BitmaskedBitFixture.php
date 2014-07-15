@@ -1,26 +1,23 @@
 <?php
 
 /**
- * @package		bitmasked
- * @subpackage	bitmasked.tests.fixtures
+ * @package		Bitmasked
+ * @subpackage	Bitmasked.Test.Fixture
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
  */
 
 /**
- * BitmaskedBit Fixture
+ * BitmaskedBitFixture
  *
  * @uses CakeTestFixture
  */
 class BitmaskedBitFixture extends CakeTestFixture {
 
 	/**
-	 * @var string
-	 */
-	public $name = 'BitmaskedBit';
-
-	/**
+	 * Fields
+	 *
 	 * @var array
 	 */
 	public $fields = array(
@@ -64,6 +61,8 @@ class BitmaskedBitFixture extends CakeTestFixture {
 	);
 
 	/**
+	 * Records
+	 *
 	 * @var array
 	 */
 	public $records = array(
@@ -94,5 +93,3 @@ class BitmaskedBitFixture extends CakeTestFixture {
 	);
 
 }
-
-?>

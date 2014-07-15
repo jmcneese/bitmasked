@@ -1,22 +1,25 @@
 <?php
 
 /**
- * @package		bitmasked
- * @subpackage	bitmasked.tests.cases.models
+ * @package		Bitmasked
+ * @subpackage	Bitmasked.Test.Case.Model
  * @author		Joshua McNeese <jmcneese@gmail.com>
  * @license		Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
- * @copyright	Copyright (c) 2009-2011 Joshua M. McNeese, Curtis J. Beeson
+ * @copyright	Copyright (c) 2009-2012 Joshua M. McNeese, Curtis J. Beeson
  */
 
 /**
- * BitmaskedBit Model Test Case
+ * BitmaskedBitTest
  *
- * @see		BitmaskedBit
- * @uses	CakeTestCase
+ * @see		    BitmaskedBit
+ * @uses	    CakeTestCase
+ * @property    BitmaskedBit    BitmaskedBit
  */
-class BitmaskedBitTestCase extends CakeTestCase {
+class BitmaskedBitTest extends CakeTestCase {
 
 	/**
+	 * Fixtures
+	 *
 	 * @var array
 	 */
 	public $fixtures = array(
@@ -24,20 +27,13 @@ class BitmaskedBitTestCase extends CakeTestCase {
 	);
 
 	/**
-	 * @return void
-	 */
-	public function start() {
-		parent::start();
-		$this->BitmaskedBit = ClassRegistry::init('Bitmasked.BitmaskedBit');
-	}
-
-	/**
-	 * Test Instance Creation
+	 * setUp Method
 	 *
 	 * @return void
 	 */
-	public function testInstanceSetup() {
-		$this->assertIsA($this->BitmaskedBit, 'Model');
+	public function setUp() {
+		parent::setUp();
+		$this->BitmaskedBit = ClassRegistry::init('Bitmasked.BitmaskedBit');
 	}
 
 	/**
@@ -58,5 +54,3 @@ class BitmaskedBitTestCase extends CakeTestCase {
 	}
 
 }
-
-?>
