@@ -12,6 +12,7 @@
             "email": "jmcneese@gmail.com"
         }
     ],
+    "license": "MIT",
     "require": {
         "composer/installers": "*"
     }
