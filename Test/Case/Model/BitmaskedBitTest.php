@@ -50,7 +50,7 @@ class BitmaskedBitTest extends CakeTestCase {
 		);
 		$result = $this->BitmaskedBit->save($data);
 		$this->assertFalse($result);
-		$this->assertEqual(count($this->BitmaskedBit->invalidFields()), count($data));
+		$this->assertEquals(count($data), count($this->BitmaskedBit->invalidFields()));
 	}
 
 }
